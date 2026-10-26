@@ -1,8 +1,8 @@
-# Fantasy Builder: download
+# The Caravan: download
 
-Gioco per Android. Per installarlo:
+Gioco per Android (prototipo). Per installarlo:
 
 1. Dal telefono apri questo link: https://github.com/Millet91/fantasy-builder-download/raw/main/fantasy-builder.apk
 2. Apri il file scaricato e conferma l'installazione. Se Android lo chiede, permetti l'installazione da questa fonte.
 
-Versione attuale: 2.2
+Versione attuale: The Caravan 0.2 (si installa come app nuova, accanto al vecchio Fantasy Builder).
