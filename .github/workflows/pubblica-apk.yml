@@ -1,0 +1,33 @@
+# Pubblica l'APK come Release di GitHub (10/11): niente più limite di 100 MB per file.
+# Come si usa: ./pubblica.sh <file.apk> <versione>  poi commit e push di release/ (vedi pubblica.sh).
+# Il link fisso all'ultima versione è:
+#   https://github.com/Millet91/fantasy-builder-download/releases/latest/download/the-caravan.apk
+# Una versione che comincia con "prova" diventa una bozza (non si vede da fuori): serve per provare il giro.
+name: Pubblica APK
+on:
+  push:
+    paths:
+      - "release/**"
+permissions:
+  contents: write
+jobs:
+  pubblica:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ricompone l'APK e lo pubblica
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          VER=$(tr -d ' \r\n' < release/version.txt)
+          if ! [[ "$VER" =~ ^[A-Za-z0-9._-]+$ ]]; then echo "versione non valida"; exit 1; fi
+          cat release/the-caravan.apk.part* > the-caravan.apk
+          echo "$(tr -d ' \r\n' < release/sha256.txt)  the-caravan.apk" | sha256sum -c -
+          ls -la the-caravan.apk
+          if [[ "$VER" == prova* ]]; then FLAGS="--draft"; else FLAGS="--latest"; fi
+          if gh release view "v$VER" >/dev/null 2>&1; then
+            gh release upload "v$VER" the-caravan.apk --clobber
+          else
+            gh release create "v$VER" the-caravan.apk --title "The Caravan $VER" --notes "The Caravan $VER per Android." --target "$GITHUB_SHA" $FLAGS
+          fi
